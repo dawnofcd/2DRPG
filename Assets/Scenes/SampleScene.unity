@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 182226625}
   - component: {fileID: 182226624}
   - component: {fileID: 182226623}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -504,8 +504,8 @@ Rigidbody2D:
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
+  m_UseAutoMass: 1
+  m_Mass: 2.069546
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
@@ -529,7 +529,7 @@ Transform:
   m_GameObject: {fileID: 1020767321}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.92, y: 1.62, z: 0}
+  m_LocalPosition: {x: 3.92, y: 1.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -551,9 +551,16 @@ MonoBehaviour:
   xInput: 0
   rb: {fileID: 1020767323}
   sPeed: 5
-  jUmpForce: 5
+  jUmpForce: 0
   anim: {fileID: 0}
-  Ismoving: 0
+  isMoving: 0
+  facingDir: 1
+  facingRight: 1
+  groundCheckDistance: 1.4
+  WhatIsGround:
+    serializedVersion: 2
+    m_Bits: 8
+  isGrounded: 0
 --- !u!70 &1020767327
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
