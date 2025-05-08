@@ -1,3 +1,5 @@
+using System;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,15 +18,18 @@ public class Player : MonoBehaviour
 
     [Header ("Dash Info")]
     [SerializeField] float dashTime;
-    [SerializeField] float dashDuration;
+    [SerializeField] float dashDuration;  // thoi gian duoc dung chieu dash
     [SerializeField] float dashSpeed;
+    [SerializeField] float dashCoolDown; // thoi gian hoi chieu
+    [SerializeField] float dashCoolDownTimer;
 
     [Header  ("Collision Info") ]
     [SerializeField] float groundCheckDistance;
     [SerializeField ] LayerMask WhatIsGround;
     [SerializeField ] bool isGrounded;
 
-    
+    [SerializeField] bool Attacking =false ;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,10 +40,7 @@ public class Player : MonoBehaviour
     void Update()
     {
        dashTime -=Time.deltaTime;
-
-       
-      
-
+       dashCoolDownTimer -=Time.deltaTime;
        CheckInput();
        FlipController();
        Movement();  
@@ -56,15 +58,21 @@ public class Player : MonoBehaviour
         
         xInput = Input.GetAxisRaw("Horizontal");
        
+         if (Input.GetKey(KeyCode.Mouse0))
+       {
+          Attacking=true;
+       }
         if (Input.GetKey(KeyCode.Space))
         {
            Jump();
         }
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && dashCoolDownTimer < 0 )
        {
             dashTime= dashDuration;
+            dashCoolDownTimer = dashCoolDown;
        }
+     
      }
      public void Movement()
      {
@@ -81,7 +89,11 @@ public class Player : MonoBehaviour
         if (isGrounded)
          rb.linearVelocity= new Vector2 (rb.linearVelocity.x, jumpForce );
     }
-
+    
+    public void AttackOver()
+    {
+        Attacking=false;
+    }
     public void AnimatorController()
     {
         isMoving = rb.linearVelocity.x !=0; // bool
@@ -89,6 +101,7 @@ public class Player : MonoBehaviour
         anim.SetBool ("Ismoving", isMoving);
         anim.SetBool ("Grounded", isGrounded);
         anim.SetBool ("isDashing", dashTime >0);
+        anim.SetBool ("Attacking", Attacking);
     }
     public void Flip()
     {    facingDir = facingDir *-1; // cần dòng nay để thiết lập các thông số kỹ năng khác
