@@ -13,7 +13,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 6
     m_ConditionEvent: AttackCount
-    m_EventTreshold: 3
+    m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3648711983207350043}
   m_Solo: 0
@@ -89,9 +89,12 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: Attacking
     m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: Grounded
+    m_EventTreshold: 2
   - m_ConditionMode: 6
     m_ConditionEvent: AttackCount
-    m_EventTreshold: 2
+    m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7934212923742887976}
   m_Solo: 0
@@ -177,19 +180,19 @@ AnimatorStateMachine:
     m_Position: {x: 430, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 403278343163167506}
-    m_Position: {x: 770, y: 0, z: 0}
+    m_Position: {x: 720, y: -60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2012897233053309076}
     m_Position: {x: 430, y: -160, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4429479621294729261}
-    m_Position: {x: 1285, y: 115, z: 0}
+    m_Position: {x: 1320, y: 70, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7934212923742887976}
-    m_Position: {x: 1320, y: 180, z: 0}
+    m_Position: {x: 1320, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3648711983207350043}
-    m_Position: {x: 1350, y: 240, z: 0}
+    m_Position: {x: 1280, y: 280, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 3511464195548167447}
@@ -216,6 +219,12 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: Attacking
     m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: Grounded
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackCount
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4429479621294729261}
   m_Solo: 0
@@ -225,7 +234,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 1
-  m_HasExitTime: 0
+  m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1

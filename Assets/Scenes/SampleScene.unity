@@ -700,6 +700,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isGrounded: 0
+  attackCounter: 0
+  comboTime: 1
+  attackWindow: 0
   Attacking: 0
 --- !u!70 &1020767327
 CapsuleCollider2D:
