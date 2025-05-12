@@ -11,6 +11,6 @@ public class PlayerAnimEvent : MonoBehaviour
 
     void AnimationTrigger()
     {
-      player.AttackOver();
+     // player.AttackOver();
     }
 }

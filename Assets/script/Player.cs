@@ -1,143 +1,70 @@
-using System;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEditor.Tilemaps;
+using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class Player : Entity
-{
-    [Header ("Move Infor")]
-    [SerializeField] float xInput;
-    [SerializeField] float speed;
-    [SerializeField] float jumpForce;
-    [SerializeField] bool isMoving;
+public class Player : MonoBehaviour
+{  
+     [Header("move info")]
+     public float Speed;
+     public Rigidbody2D rb;
+
+
+     [Header("Collision Info")]
+    [SerializeField] float groundCheckDistance;
+    [SerializeField] LayerMask WhatIsGround;
+    [SerializeField] protected bool isGrounded;
+     [SerializeField] protected bool isWall;
+    [SerializeField] protected Transform groundCheckPos;
+    [SerializeField] protected Transform wallCheckPos;
+
+    [SerializeField] protected float wallCheckDis;
+
+     #region StateMachine Component
+    public Animator anim {get;  private set;}
+    public PlayerStateMachine stateMachine { get; private set; }
+    public PlayerIdleState idleState { get; private set; }
+
+    public PlayerMoveState moveState { get; private set; }
+
+    public PlayerAirState airState {get; private set;}
+    public PlayerJumpState jumpState {get ; private set;}
+
+     #endregion
     
 
-    [Header("Dash Info")]
-    [SerializeField] float dashTime;
-    [SerializeField] float dashDuration;  // thoi gian duoc dung chieu dash
-    [SerializeField] float dashSpeed;
-    [SerializeField] float dashCoolDown; // thoi gian hoi chieu
-    [SerializeField] float dashCoolDownTimer;
-
-    
-
-    [Header("Attack Info")]
-    [SerializeField] int attackCounter = 0;
-    [SerializeField] float comboTime;
-    [SerializeField] float attackWindow;
-    [SerializeField] bool Attacking = false;
-
-   protected override void Start()
+    void Awake()
     {
-       base.Start();
+        stateMachine = new PlayerStateMachine();
+        idleState = new PlayerIdleState(this, stateMachine, "Idle");
+        moveState = new PlayerMoveState(this, stateMachine, "Move");
+        airState = new PlayerAirState (this, stateMachine, "Jump");
+        jumpState = new PlayerJumpState (this, stateMachine, "Jump");
+        anim = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+
+    void Start()
+    {
+         stateMachine.Initialize(idleState);
+
     }
 
     // Update is called once per frame
-  protected override void Update()
+    void Update()
     {
-        base.Update();
-        dashTime -= Time.deltaTime;
-        dashCoolDownTimer -= Time.deltaTime;
-        attackWindow -= Time.deltaTime;
-
-        CheckInput();
-        FlipController();
-        Movement();
-        AnimatorController();
-       
+        stateMachine.currentState.Update();
     }
 
-
-   
-    public void CheckInput()
+    public void SetVelocity (float xvelocity, float yvelocity)
     {
-
-        xInput = Input.GetAxisRaw("Horizontal");
-
-        if (!isGrounded) // khong phai grounder thi k tan cong
-            return; // khong thuc hien dong duoi nua
-
-        if (Input.GetKey(KeyCode.Mouse0))
-        {
-           StartAttackEvent();
-        }
-        if (Input.GetKey(KeyCode.Space))
-        {
-            Jump();
-        }
-
-        if (Input.GetKey(KeyCode.LeftShift) && dashCoolDownTimer < 0)
-        {
-           DashAbility();
-        }
-
-    }
-
-
-    public void StartAttackEvent()
-    {
-         if (attackWindow < 0) // tg combo 
-                attackCounter = 0;
-            Attacking = true;
-            attackWindow = comboTime; // reset tg  combo
-    }
-        
-    
-    public void DashAbility()
-    {
-        dashTime = dashDuration;
-        dashCoolDownTimer = dashCoolDown;
-    }
-    public void Movement()
-    {
-        if (dashTime > 0)
-        {
-            rb.linearVelocity = new Vector2(facingDir * dashSpeed, 0);
-        }
-        else
-            rb.linearVelocity = new Vector2(xInput * speed, rb.linearVelocity.y);
-
-    }
-    public void Jump()
-    {
-        if (isGrounded)
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-    }
-
-    public void AttackOver()
-    {
-        Attacking = false;
-        attackCounter++;
-        if (attackCounter > 2)
-        {
-            attackCounter = 0;
-        }
-    }
-    public void AnimatorController()
-    {
-        isMoving = rb.linearVelocity.x != 0; // bool
-        anim.SetFloat("Yvelocity", rb.linearVelocity.y);
-        anim.SetBool("Ismoving", isMoving);
-        anim.SetBool("Grounded", isGrounded);
-        anim.SetBool("isDashing", dashTime > 0);
-        anim.SetBool("Attacking", Attacking);
-        anim.SetInteger("AttackCount", attackCounter);
+        rb.linearVelocity= new Vector2 (xvelocity, yvelocity);
     }
   
-
-    public void FlipController()
+   
+   public bool IsGroundDetected() => Physics2D.Raycast(groundCheckPos.position, Vector2.down, groundCheckDistance, WhatIsGround);
+     void OnDrawGizmos()
     {
-        if (rb.linearVelocity.x > 0 && !facingRight)
-        {
-            Flip(); // char quay phải nhưng mặt char không phải bên phải thì lật cho !facingright thành bên phải
-        }
-        else if (rb.linearVelocity.x < 0 && facingRight)
-        {
-            Flip();
-        }
+         Gizmos.DrawLine(groundCheckPos.position, new Vector3 (groundCheckPos.position.x, groundCheckPos.position.y-groundCheckDistance));
+         Gizmos.DrawLine (wallCheckPos.position, new Vector3(wallCheckPos.position.x +wallCheckDis, wallCheckPos.position.y));
     }
-
-    
 }
-

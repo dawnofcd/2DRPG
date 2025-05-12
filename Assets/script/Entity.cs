@@ -8,7 +8,9 @@ public class Entity : MonoBehaviour
     [SerializeField] protected Animator anim;
 
     [SerializeField] protected int facingDir = 1;
-    [SerializeField] protected bool facingRight = true;
+    [SerializeField] protected bool facingRight = false;
+
+      protected bool Attacking = false;
 
 
     [Header("Collision Info")]
@@ -38,12 +40,12 @@ public class Entity : MonoBehaviour
         facingRight = !facingRight;
         transform.Rotate(0, 180, 0);
     }
-    protected void CollisionChecks()
+    protected virtual void  CollisionChecks()
     {
         isGrounded = Physics2D.Raycast(groundCheckPos.position, Vector2.down, groundCheckDistance, WhatIsGround);
         isWall     =Physics2D.Raycast (wallCheckPos.position, Vector2.right*facingDir, wallCheckDis, WhatIsGround);
     }
-    void OnDrawGizmos()
+   protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheckPos.position, new Vector2(groundCheckPos.position.x, groundCheckPos.position.y - groundCheckDistance));
         Gizmos.DrawLine (wallCheckPos.position, new Vector2 (wallCheckPos.position.x+wallCheckDis,wallCheckPos.position.y ));
